@@ -25,7 +25,6 @@ var convertArgsForScript = function convertArgsForScript(interfacesFilePath, arg
 };
 
 var formatResult = function formatResult(textResult) {
-  console.log(textResult)
   var rows = textResult.replace(/^(?=\n)$|^\s*|\s*$|\n\n+/gm,"").split('\n');
   var rawResult = rows[0].split(' ');
   var formattedResult = {};
