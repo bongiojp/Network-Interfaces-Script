@@ -31,7 +31,7 @@ BEGIN { start = 0;
 
     order = 0
     
-    if (ARGC < 3 || ARGC > 10) {
+    if (ARGC < 3 || ARGC > 16) {
         usage();
         exit 1;
     }
