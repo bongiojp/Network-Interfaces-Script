@@ -52,6 +52,15 @@ BEGIN { start = 0;
         if (pair[1] == "dns") {
         pair[1] = "dns-nameservers";
         }
+        if (pair[1] == "bond_updelay") {
+        pair[1] = "bond-updelay";
+        }
+        if (pair[1] == "bond_downdelay") {
+        pair[1] = "bond-downdelay";
+        }
+        if (pair[1] == "xmit_hash_policy") {
+        pair[1] = "xmit-hash-policy";
+        }
         settings[pair[1]] = pair[2];
     } else {
         usage();
