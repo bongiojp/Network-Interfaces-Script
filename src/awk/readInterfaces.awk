@@ -66,9 +66,17 @@ BEGIN { start = 0;
     # Scan for the static content
     if (static) {
     # 2nd field to end of the line
+    printf("%s\n",$1);
     if (length($1)) {
         interface[$1] = substr($0, index($0, $2));
         gotAddr = 1;
+    }
+    if (length($2)) {
+        for (i = 3; i <= NF; i++) {
+            if ($i != "") {
+                interface[$1] = sprintf("%s,%s",$i,interface[$1]);
+            }
+        }
     }
     }
 }
