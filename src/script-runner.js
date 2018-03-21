@@ -82,6 +82,32 @@ var read = function read(interfacesFilePath, interfaceName) {
   });
 };
 
+var _h_DefaultGateway = function _h_DefaultGateway(interfacesFilePath, defaultGateway, action) {
+  interfacesFilePath = interfacesFilePath || DEFAULT_INTERFACE_FILE_LOCATION;
+  args.device = "N/A";
+  args.defaultgateway = defaultGateway;
+  args.action = action;
+  return new Promise(function (resolve, reject) {
+    runScript(WRITE_SCRIPT_PATH, formattedArgs).then(function (newText) {
+      writeToFile(interfacesFilePath, newText).then(function (success) {
+        resolve(args);
+      }).catch(function (fileWriteError) {
+        reject(fileWriteError);
+      });
+    }).catch(function (error) {
+      console.log('Error running script: ' + error);
+      reject(error);
+    });
+  });
+};
+
+var setDefaultGateway = function setDefaultGateway(interfacesFilePath, defaultGateway, action) {
+    return _h_DefaultGateway(interfacesFilePath, defaultGateway, "add");
+}
+var removeDefaultGateway = function removeDefaultGateway(interfacesFilePath, defaultGateway, action) {
+    return _h_DefaultGateway(interfacesFilePath, defaultGateway, "remove");
+}
+
 var write = function write(interfacesFilePath, interfaceName, args) {
   interfacesFilePath = interfacesFilePath || DEFAULT_INTERFACE_FILE_LOCATION;
   interfaceName = interfaceName || DEFAULT_INTERFACE;
@@ -105,5 +131,7 @@ var write = function write(interfacesFilePath, interfaceName, args) {
 
 module.exports = {
   read: read,
-  write: write
+  write: write,
+  setDefaultGateway: setDefaultGateway,
+  removeDefaultGateway: removeDefaultGateway
 };

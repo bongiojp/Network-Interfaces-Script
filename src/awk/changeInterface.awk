@@ -6,10 +6,10 @@ function writeStatic(device, fields, orders) {
     value = fields[field];
     delete fields[field];
     if (length(value)) {
-        printf("    %s %s\n", field, value);        
+        printf("    %s %s\n", field, value);
     }
     }
-    
+
     # additional items have no order
     for (f in fields) {
     value = fields[f];
@@ -28,7 +28,9 @@ function usage() {
 }
 
 BEGIN { start = 0;
-
+    setting_defaultgateway = 0;
+    gateway_replaced=0
+    defaultgateway=0
     order = 0
     
     if (ARGC < 3 || ARGC > 16) {
@@ -40,15 +42,22 @@ BEGIN { start = 0;
         num = split(ARGV[i], pair, "=");
         if (pair[1] == "arg" && pair[2] == "debug") {
             debug = 1;
-    } else if (pair[1] == "mode") {
+	} else if (pair[1] == "mode") {
         mode = pair[2];
     } else if (pair[1] == "action" && pair[2] == "remove")
             remove = 1;
         else if (pair[1] == "action" && pair[2] == "add")
             add = 1;
     else if (pair[1] == "device" || pair[1] == "dev") {
-        device = pair[2];
+	if (pair[2] == "N/A") {
+	    setting_defaultgateway = 1;
+	} else {
+	    device = pair[2];
+	}
     } else if (num == 2) {
+	if (pair[1] == "defaultgateway") {
+	    defaultgateway = pair[2];
+	}
         if (pair[1] == "dns") {
         pair[1] = "dns-nameservers";
         }
@@ -87,6 +96,7 @@ BEGIN { start = 0;
 } 
 
 {
+    if (setting_defaultgateway == 0) {
     # auto <device> line
     if ($1 == "auto") {
     if ($2 != device) {
@@ -170,6 +180,13 @@ BEGIN { start = 0;
     print $0;
     next;
     }
+    } else { # here we set the default gateway
+	# If there is already a default gateway, then replace it with a new instruction.
+	if ($1 == "up" && $2 == "route" && $3 == "add" && $4 == "default" && $5 == "gw") {
+	    printf("up route add default gw %s", defaultgateway)
+	    gateway_replaced=1
+	}
+    }
 }
 
 END {
@@ -186,5 +203,11 @@ END {
         writeStatic(device, settings, fieldOrders);
         }
     }
-    }    
+    }
+
+    # If there was not already a default gateway, this will
+    # add a new entry
+    if (setting_defaultgateway == 1 && gateway_replaced == 1) {
+	printf("up route add default gw %s", defaultgateway)
+    }
 }

@@ -13,4 +13,11 @@ module.exports = class NetworkInterface {
 	setConfig (interfaceName, settings) {
 		return scriptRunner.write(this.interfacesFilePath, interfaceName, settings);
 	}
+
+        setDefaultGateway (defaultGateway) {
+	        return scriptRunner.setDefaultGateway(this.interfacesFilePath, defaultGateway);
+	}
+        removeDefaultGateway (defaultGateway) {
+	        return scriptRunner.removeDefaultGateway(this.interfacesFilePath, defaultGateway);
+	}
 }
